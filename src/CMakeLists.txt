@@ -91,14 +91,19 @@ if(UNIX)
     target_compile_options(discord-rpc PRIVATE
         -Wno-unknown-pragmas # pragma push thing doesn't work on clang
         -Wno-old-style-cast # it's fine
-        -Wno-c++98-compat # that was almost 2 decades ago
-        -Wno-c++98-compat-pedantic
         -Wno-missing-noreturn
         -Wno-padded # structure padding
-        -Wno-covered-switch-default
-        -Wno-exit-time-destructors # not sure about these
-        -Wno-global-constructors
     )
+
+    if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+        target_compile_options(discord-rpc PRIVATE
+            -Wno-c++98-compat # that was almost 2 decades ago
+            -Wno-c++98-compat-pedantic
+            -Wno-covered-switch-default
+            -Wno-exit-time-destructors # not sure about these
+            -Wno-global-constructors
+        )
+    endif()
 
     if (${BUILD_SHARED_LIBS})
         target_compile_options(discord-rpc PRIVATE -fPIC)
