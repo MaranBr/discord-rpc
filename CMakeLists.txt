@@ -27,26 +27,14 @@ if (CLANG_FORMAT_CMD)
 endif(CLANG_FORMAT_CMD)
 
 # thirdparty stuff
-execute_process(
-    COMMAND mkdir ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty
-    ERROR_QUIET
-)
+set(RAPIDJSON ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/rapidjson-1.1.0)
 
-find_file(RAPIDJSONTEST NAMES rapidjson rapidjson-1.1.0 PATHS ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty CMAKE_FIND_ROOT_PATH_BOTH)
-if (NOT RAPIDJSONTEST)
-    message("no rapidjson, download")
-    set(RJ_TAR_FILE ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/v1.1.0.tar.gz)
-    file(DOWNLOAD https://github.com/miloyip/rapidjson/archive/v1.1.0.tar.gz ${RJ_TAR_FILE})
-    execute_process(
-        COMMAND ${CMAKE_COMMAND} -E tar xzf ${RJ_TAR_FILE}
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty
-    )
-    file(REMOVE ${RJ_TAR_FILE})
-endif(NOT RAPIDJSONTEST)
+if (NOT EXISTS "${RAPIDJSON}")
+    message(FATAL_ERROR "RapidJSON 1.1.0 not found in ${RAPIDJSON}")
+endif()
 
-find_file(RAPIDJSON NAMES rapidjson rapidjson-1.1.0 PATHS ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty CMAKE_FIND_ROOT_PATH_BOTH)
-
-add_library(rapidjson STATIC IMPORTED ${RAPIDJSON})
+add_library(rapidjson INTERFACE IMPORTED)
+set_target_properties(rapidjson PROPERTIES INTERFACE_INCLUDE_DIRECTORIES "${RAPIDJSON}/include")
 
 # add subdirs
 
